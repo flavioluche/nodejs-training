@@ -2,7 +2,9 @@
 
 const fs = require('fs');
 
-var buff = fs.readFileSync('/home/flavioluche/Imagens/Flavio.jpeg');
-var base64data = buff.toString('base64');
+let binary = fs.readFileSync('/home/flavioluche/Imagens/Flavio.jpeg');
+let base64data = binary.toString('base64');
 
-console.log('A imagem convertida é ' + base64data);
+fs.writeFileSync('encodedImage.txt', base64data);
+
+console.log('Image has been converted to base64');
