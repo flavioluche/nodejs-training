@@ -5,23 +5,30 @@
     get user address by his ID
 */
 
-function getUser(callback) {
-    setTimeout(() => {
-        return callback(null, {
-            id: 1,
-            name: 'Allan',
-            birthDate: new Date()
-        })
-    }, 1000);
+function getUser() {
+    return new Promise(function resolvePromise(resolve,reject){
+        setTimeout(() => {
+            //return reject (new Error('Something unexpected has happened.'))
+            return resolve({
+                id: 1,
+                name: 'Allan',
+                birthDate: new Date()
+            })
+        }, 1000);
+
+    })
 }
 
-function getPhone(userId, callback) {
-    setTimeout(() => {
-        return callback(null, {
-            phoneNumber: '2025550138',
-            areaCode: 202
-        })
-    }, 2000);
+function getPhone(userId) {
+    return new Promise(function resolvePromise(resolve, reject){
+        setTimeout(() => {
+            return resolve({
+                phoneNumber: '2025550138',
+                areaCode: 202
+            })
+        }, 2000);
+
+    })
 }
 
 function getAddress(userId, callback) {
@@ -34,32 +41,24 @@ function getAddress(userId, callback) {
 
 }
 
-function resolveUser(error, user) {
-    console.log(user)
-}
-
-getUser(function resolveUser(error, user) {
-    if (error) {
-        console.log('There is a problem with the user. ', error)
-        return;
-    }
-    getPhone(user.id, function resolvePhone(error1, phone) {
-        if (error1) {
-            console.log('There is a problem with the phone. ', error)
-            return;
-        }
-        getAddress(user.id, function resolveAddress(error2, address) {
-            if (error2) {
-                console.log('There is a problem with the address. ', error)
-                return;
+const user = getUser()
+user
+    .then(function (userObject){
+        return getPhone(userObject.id)
+        //getPhone has to be resolved before the result is returned
+        .then(function resolvePhone(result){
+            return{
+                user:{
+                    name: userObject.name,
+                    userId: userObject.id
+                },
+                phone: result
             }
-            console.log(`
-            Nome: ${user.name}
-            Endereco: ${address.street}, ${address.number}
-            Telefone: ${phone.areaCode}, ${phone.phoneNumber}
-            `)
         })
-
     })
-
+    .then(function (userObject){
+    console.log('User', userObject)
+})
+    .catch(function (error){
+    console.error('There was a problem returning the user.',error)
 })
